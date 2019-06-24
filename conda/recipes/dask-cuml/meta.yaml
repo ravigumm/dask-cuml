@@ -16,23 +16,27 @@
 
 # Usage:
 #   conda build -c defaults -c conda-forge .
+{% set version = environ.get('GIT_DESCRIBE_TAG', '0.0.0.dev').lstrip('v') %}
+{% set git_revision_count=environ.get('GIT_DESCRIBE_NUMBER', 0) %}
+{% set py_version=environ.get('CONDA_PY', 36) %}
 package:
   name: dask-cuml
-  version: {{ environ.get('GIT_DESCRIBE_TAG', '0.0.0.dev').lstrip('v') }}
+  version: {{ version }}
 
 source:
   path: ..
 
 build:
-  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
+  number: {{ git_revision_count }}
+  string: py{{ py_version }}_{{ git_revision_count }}
 
 requirements:
   build:
-    - dask-cudf
-    - dask-cuda
+    - dask-cudf 0.7*
+    - dask-cuda 0.7*
   run:
-    - dask-cudf
-    - dask-cuda
+    - dask-cudf 0.7*
+    - dask-cuda 0.7*
 test:
   imports:
     - dask_cuml
